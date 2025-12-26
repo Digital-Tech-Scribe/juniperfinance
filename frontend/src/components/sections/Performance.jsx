@@ -54,7 +54,7 @@ const Performance = () => {
                 </div>
               </div>
             </TooltipProvider>
-            <p className="text-3xl font-bold text-white">{performanceData.summary.sharpeRatio}</p>
+            <p className="text-3xl font-bold text-white">{performance.summary.sharpeRatio}</p>
           </div>
           <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
             <TooltipProvider>
