@@ -418,6 +418,79 @@ async def update_performance(input: PerformanceUpdate):
     performance = await db.performance.find_one({}, {"_id": 0})
     return Performance(**performance)
 
+
+# ==================== SEED DATA ENDPOINT ====================
+
+@api_router.post("/seed")
+async def seed_database():
+    """Seed database with initial data (testimonials and insights)"""
+    
+    # Check if data already exists
+    testimonials_count = await db.testimonials.count_documents({})
+    insights_count = await db.insights.count_documents({})
+    
+    seeded = {"testimonials": 0, "insights": 0}
+    
+    # Seed testimonials if empty
+    if testimonials_count == 0:
+        default_testimonials = [
+            Testimonial(
+                name="Michael R.",
+                role="Business Owner",
+                content="Juniper's disciplined approach to risk management has been exactly what I needed. My portfolio has grown steadily while I sleep soundly at night.",
+                rating=5
+            ),
+            Testimonial(
+                name="Sarah L.",
+                role="Healthcare Professional",
+                content="The transparency and communication are outstanding. I always know exactly what's happening with my investments and why.",
+                rating=5
+            ),
+            Testimonial(
+                name="David K.",
+                role="Tech Executive",
+                content="The forex signals have been incredibly accurate. Juniper's data-driven approach to trading has significantly improved my returns.",
+                rating=5
+            )
+        ]
+        for t in default_testimonials:
+            await db.testimonials.insert_one(t.model_dump())
+        seeded["testimonials"] = len(default_testimonials)
+    
+    # Seed insights if empty
+    if insights_count == 0:
+        default_insights = [
+            Insight(
+                title="Navigating Volatility: Q3 2025 Market Outlook",
+                excerpt="Our analysis of current market conditions and strategic positioning for the months ahead.",
+                category="Market Insights",
+                readTime="8 min read"
+            ),
+            Insight(
+                title="Understanding Cryptocurrency Regulation: What Investors Need to Know",
+                excerpt="A comprehensive guide to the evolving regulatory landscape and its impact on digital asset investments.",
+                category="White Paper",
+                readTime="12 min read"
+            ),
+            Insight(
+                title="Forex Trading Fundamentals: Currency Pair Analysis",
+                excerpt="Deep dive into major currency pairs and the macroeconomic factors driving their movements.",
+                category="Education",
+                readTime="6 min read"
+            ),
+            Insight(
+                title="Options Strategies for Income Generation",
+                excerpt="How covered calls and cash-secured puts can enhance portfolio returns in sideways markets.",
+                category="Strategy",
+                readTime="10 min read"
+            )
+        ]
+        for i in default_insights:
+            await db.insights.insert_one(i.model_dump())
+        seeded["insights"] = len(default_insights)
+    
+    return {"message": "Database seeded successfully", "seeded": seeded}
+
 # Include the router in the main app
 app.include_router(api_router)
 
