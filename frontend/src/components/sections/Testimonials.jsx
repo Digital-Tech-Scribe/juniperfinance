@@ -1,8 +1,10 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
-import { testimonials } from '../../data/mockData';
+import { useData } from '../../context/DataContext';
 
 const Testimonials = () => {
+  const { testimonials } = useData();
+  
   return (
     <section className="py-20 lg:py-28 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
