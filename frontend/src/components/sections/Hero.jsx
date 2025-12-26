@@ -121,8 +121,8 @@ const Hero = () => {
                     <span className="text-white font-bold text-2xl">JB</span>
                   </div>
                   <div>
-                    <h3 className="font-bold text-slate-900 text-xl">{profileData.name}</h3>
-                    <p className="text-slate-500">{profileData.title}</p>
+                    <h3 className="font-bold text-slate-900 text-xl">{profile.name}</h3>
+                    <p className="text-slate-500">{profile.title}</p>
                   </div>
                 </div>
                 
