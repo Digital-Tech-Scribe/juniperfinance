@@ -121,7 +121,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="py-6 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-slate-400 text-sm">
-            © {currentYear} {profileData.name}. All rights reserved.
+            © {currentYear} {profile.name}. All rights reserved.
           </p>
           <div className="flex gap-6">
             <a href="#" className="text-slate-400 hover:text-white text-sm transition-colors">
