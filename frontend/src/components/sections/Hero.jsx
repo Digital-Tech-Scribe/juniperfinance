@@ -81,7 +81,7 @@ const Hero = () => {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
               <a
-                href={`https://wa.me/${profileData.whatsapp.replace(/[^0-9]/g, '')}`}
+                href={`https://wa.me/${profile.whatsapp?.replace(/[^0-9]/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
