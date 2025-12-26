@@ -81,7 +81,7 @@ const About = () => {
                     Transparency matters. Verify my registration and background through FINRA's official BrokerCheck system.
                   </p>
                   <a
-                    href={profileData.finraLink}
+                    href={profile.finraLink}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
