@@ -29,14 +29,14 @@ const Performance = () => {
               <span className="text-slate-400 text-sm">YTD Return</span>
               <TrendingUp className="w-5 h-5 text-emerald-400" />
             </div>
-            <p className="text-3xl font-bold text-emerald-400">{performanceData.summary.ytdReturn}</p>
+            <p className="text-3xl font-bold text-emerald-400">{performance.summary.ytdReturn}</p>
           </div>
           <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
             <div className="flex items-center justify-between mb-2">
               <span className="text-slate-400 text-sm">Avg Annual Return</span>
               <TrendingUp className="w-5 h-5 text-emerald-400" />
             </div>
-            <p className="text-3xl font-bold text-emerald-400">{performanceData.summary.avgAnnualReturn}</p>
+            <p className="text-3xl font-bold text-emerald-400">{performance.summary.avgAnnualReturn}</p>
           </div>
           <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
             <TooltipProvider>
