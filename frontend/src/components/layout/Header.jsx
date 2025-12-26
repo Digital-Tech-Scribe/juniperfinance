@@ -36,7 +36,7 @@ const Header = () => {
               <p className={`font-semibold text-lg transition-colors ${
                 isScrolled ? 'text-slate-900' : 'text-slate-900'
               }`}>
-                {profileData.name}
+                {profile.name}
               </p>
               <p className={`text-xs transition-colors ${
                 isScrolled ? 'text-slate-500' : 'text-slate-500'
