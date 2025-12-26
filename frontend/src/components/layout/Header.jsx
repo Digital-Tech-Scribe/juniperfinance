@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Shield, ExternalLink } from 'lucide-react';
+import { Menu, X, Shield, ExternalLink, Facebook, Instagram, Linkedin, Twitter } from 'lucide-react';
 import { Button } from '../ui/button';
 import { navLinks, profileData } from '../../data/mockData';
 
