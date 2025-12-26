@@ -222,6 +222,202 @@ async def get_status_checks():
     
     return status_checks
 
+
+# ==================== CONTACT ENDPOINTS ====================
+
+@api_router.post("/contacts", response_model=Contact)
+async def create_contact(input: ContactCreate):
+    """Submit a contact/consultation request"""
+    contact_obj = Contact(**input.model_dump())
+    doc = contact_obj.model_dump()
+    doc['timestamp'] = doc['timestamp'].isoformat()
+    await db.contacts.insert_one(doc)
+    return contact_obj
+
+@api_router.get("/contacts", response_model=List[Contact])
+async def get_contacts():
+    """Get all contact submissions"""
+    contacts = await db.contacts.find({}, {"_id": 0}).to_list(1000)
+    for contact in contacts:
+        if isinstance(contact.get('timestamp'), str):
+            contact['timestamp'] = datetime.fromisoformat(contact['timestamp'])
+    return contacts
+
+
+# ==================== PROFILE ENDPOINTS ====================
+
+@api_router.get("/profile", response_model=Profile)
+async def get_profile():
+    """Get site profile/settings"""
+    profile = await db.profile.find_one({}, {"_id": 0})
+    if not profile:
+        # Return default profile if none exists
+        default_profile = Profile()
+        doc = default_profile.model_dump()
+        await db.profile.insert_one(doc)
+        return default_profile
+    return Profile(**profile)
+
+@api_router.put("/profile", response_model=Profile)
+async def update_profile(input: ProfileUpdate):
+    """Update site profile/settings"""
+    update_data = {k: v for k, v in input.model_dump().items() if v is not None}
+    if update_data:
+        if 'socialLinks' in update_data and update_data['socialLinks']:
+            update_data['socialLinks'] = update_data['socialLinks']
+        await db.profile.update_one({}, {"$set": update_data}, upsert=True)
+    profile = await db.profile.find_one({}, {"_id": 0})
+    return Profile(**profile)
+
+
+# ==================== TESTIMONIAL ENDPOINTS ====================
+
+@api_router.get("/testimonials", response_model=List[Testimonial])
+async def get_testimonials():
+    """Get all active testimonials"""
+    testimonials = await db.testimonials.find({"isActive": True}, {"_id": 0}).to_list(100)
+    return [Testimonial(**t) for t in testimonials]
+
+@api_router.get("/testimonials/all", response_model=List[Testimonial])
+async def get_all_testimonials():
+    """Get all testimonials (including inactive)"""
+    testimonials = await db.testimonials.find({}, {"_id": 0}).to_list(100)
+    return [Testimonial(**t) for t in testimonials]
+
+@api_router.post("/testimonials", response_model=Testimonial)
+async def create_testimonial(input: TestimonialCreate):
+    """Create a new testimonial"""
+    testimonial_obj = Testimonial(**input.model_dump())
+    await db.testimonials.insert_one(testimonial_obj.model_dump())
+    return testimonial_obj
+
+@api_router.put("/testimonials/{testimonial_id}", response_model=Testimonial)
+async def update_testimonial(testimonial_id: str, input: TestimonialUpdate):
+    """Update a testimonial"""
+    update_data = {k: v for k, v in input.model_dump().items() if v is not None}
+    if update_data:
+        result = await db.testimonials.update_one({"id": testimonial_id}, {"$set": update_data})
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Testimonial not found")
+    testimonial = await db.testimonials.find_one({"id": testimonial_id}, {"_id": 0})
+    if not testimonial:
+        raise HTTPException(status_code=404, detail="Testimonial not found")
+    return Testimonial(**testimonial)
+
+@api_router.delete("/testimonials/{testimonial_id}")
+async def delete_testimonial(testimonial_id: str):
+    """Delete a testimonial"""
+    result = await db.testimonials.delete_one({"id": testimonial_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Testimonial not found")
+    return {"message": "Testimonial deleted successfully"}
+
+
+# ==================== INSIGHT ENDPOINTS ====================
+
+@api_router.get("/insights", response_model=List[Insight])
+async def get_insights():
+    """Get all published insights"""
+    insights = await db.insights.find({"isPublished": True}, {"_id": 0}).to_list(100)
+    return [Insight(**i) for i in insights]
+
+@api_router.get("/insights/all", response_model=List[Insight])
+async def get_all_insights():
+    """Get all insights (including unpublished)"""
+    insights = await db.insights.find({}, {"_id": 0}).to_list(100)
+    return [Insight(**i) for i in insights]
+
+@api_router.get("/insights/{insight_id}", response_model=Insight)
+async def get_insight(insight_id: str):
+    """Get a single insight by ID"""
+    insight = await db.insights.find_one({"id": insight_id}, {"_id": 0})
+    if not insight:
+        raise HTTPException(status_code=404, detail="Insight not found")
+    return Insight(**insight)
+
+@api_router.post("/insights", response_model=Insight)
+async def create_insight(input: InsightCreate):
+    """Create a new insight/article"""
+    insight_obj = Insight(**input.model_dump())
+    await db.insights.insert_one(insight_obj.model_dump())
+    return insight_obj
+
+@api_router.put("/insights/{insight_id}", response_model=Insight)
+async def update_insight(insight_id: str, input: InsightUpdate):
+    """Update an insight"""
+    update_data = {k: v for k, v in input.model_dump().items() if v is not None}
+    if update_data:
+        result = await db.insights.update_one({"id": insight_id}, {"$set": update_data})
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Insight not found")
+    insight = await db.insights.find_one({"id": insight_id}, {"_id": 0})
+    if not insight:
+        raise HTTPException(status_code=404, detail="Insight not found")
+    return Insight(**insight)
+
+@api_router.delete("/insights/{insight_id}")
+async def delete_insight(insight_id: str):
+    """Delete an insight"""
+    result = await db.insights.delete_one({"id": insight_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Insight not found")
+    return {"message": "Insight deleted successfully"}
+
+
+# ==================== PERFORMANCE ENDPOINTS ====================
+
+@api_router.get("/performance", response_model=Performance)
+async def get_performance():
+    """Get performance data"""
+    performance = await db.performance.find_one({}, {"_id": 0})
+    if not performance:
+        # Return default performance data
+        default_performance = Performance(
+            chartData=[
+                ChartDataPoint(month="Jan", portfolio=100, benchmark=100),
+                ChartDataPoint(month="Feb", portfolio=103.2, benchmark=101.5),
+                ChartDataPoint(month="Mar", portfolio=101.8, benchmark=99.2),
+                ChartDataPoint(month="Apr", portfolio=106.5, benchmark=102.8),
+                ChartDataPoint(month="May", portfolio=109.1, benchmark=104.1),
+                ChartDataPoint(month="Jun", portfolio=108.2, benchmark=103.5),
+                ChartDataPoint(month="Jul", portfolio=112.4, benchmark=106.2),
+                ChartDataPoint(month="Aug", portfolio=115.8, benchmark=107.8),
+                ChartDataPoint(month="Sep", portfolio=114.2, benchmark=105.9),
+                ChartDataPoint(month="Oct", portfolio=117.5, benchmark=108.4),
+                ChartDataPoint(month="Nov", portfolio=120.1, benchmark=110.2),
+                ChartDataPoint(month="Dec", portfolio=118.4, benchmark=109.5),
+            ],
+            allocation=[
+                AllocationItem(asset="Equities", percentage=40, color="#1e3a5a"),
+                AllocationItem(asset="Forex", percentage=25, color="#3b82f6"),
+                AllocationItem(asset="Cryptocurrency", percentage=20, color="#64748b"),
+                AllocationItem(asset="Options", percentage=10, color="#94a3b8"),
+                AllocationItem(asset="Cash", percentage=5, color="#cbd5e1"),
+            ]
+        )
+        await db.performance.insert_one(default_performance.model_dump())
+        return default_performance
+    return Performance(**performance)
+
+@api_router.put("/performance", response_model=Performance)
+async def update_performance(input: PerformanceUpdate):
+    """Update performance data"""
+    update_data = {}
+    if input.summary:
+        update_data['summary'] = input.summary.model_dump()
+    if input.disclaimer:
+        update_data['disclaimer'] = input.disclaimer
+    if input.chartData:
+        update_data['chartData'] = [c.model_dump() for c in input.chartData]
+    if input.allocation:
+        update_data['allocation'] = [a.model_dump() for a in input.allocation]
+    
+    if update_data:
+        await db.performance.update_one({}, {"$set": update_data}, upsert=True)
+    
+    performance = await db.performance.find_one({}, {"_id": 0})
+    return Performance(**performance)
+
 # Include the router in the main app
 app.include_router(api_router)
 
