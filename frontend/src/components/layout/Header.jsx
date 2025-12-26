@@ -98,7 +98,7 @@ const Header = () => {
             </div>
             <div className="w-px h-6 bg-slate-200" />
             <a
-              href={profileData.finraLink}
+              href={profile.finraLink}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors"
@@ -176,7 +176,7 @@ const Header = () => {
                 </a>
               </div>
               <a
-                href={profileData.finraLink}
+                href={profile.finraLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 text-sm text-emerald-600 font-medium"
