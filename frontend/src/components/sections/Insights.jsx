@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock, ArrowRight, BookOpen, FileText, Lightbulb, TrendingUp } from 'lucide-react';
-import { insights } from '../../data/mockData';
+import { useData } from '../../context/DataContext';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 
@@ -19,6 +19,12 @@ const categoryColors = {
 };
 
 const Insights = () => {
+  const { insights } = useData();
+  
+  if (!insights || insights.length === 0) {
+    return null;
+  }
+  
   return (
     <section id="insights" className="py-20 lg:py-28 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
