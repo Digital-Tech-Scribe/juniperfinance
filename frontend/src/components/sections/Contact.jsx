@@ -79,7 +79,7 @@ const Contact = () => {
               </a>
 
               <a
-                href={`https://wa.me/${profileData.whatsapp.replace(/[^0-9]/g, '')}`}
+                href={`https://wa.me/${profile.whatsapp.replace(/[^0-9]/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-4 p-4 bg-white rounded-xl border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all group"
