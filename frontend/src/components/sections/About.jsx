@@ -59,7 +59,7 @@ const About = () => {
 
             <div className="space-y-4 text-slate-600 leading-relaxed">
               <p>
-                With over {profileData.yearsExperience} years of experience in the financial markets, I've dedicated my career to helping clients build and preserve wealth through disciplined, research-driven investment strategies.
+                With over {profile.yearsExperience} years of experience in the financial markets, I've dedicated my career to helping clients build and preserve wealth through disciplined, research-driven investment strategies.
               </p>
               <p>
                 My approach combines rigorous fundamental analysis with technical market insights across multiple asset classes—including equities, forex, cryptocurrency, and options. This diversified perspective allows me to identify opportunities and manage risk across market conditions.
