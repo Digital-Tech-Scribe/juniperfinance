@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, MessageCircle, Send, Calendar, MapPin, Clock, CheckCircle } from 'lucide-react';
 import { useData } from '../../context/DataContext';
-import { submitContact } from '../../services/api';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
@@ -21,13 +20,27 @@ const Contact = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const encode = (data) => {
+    return Object.keys(data)
+      .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
+      .join("&");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     
     try {
-      await submitContact(formData);
+      await fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encode({
+          "form-name": "contact",
+          ...formData
+        })
+      });
+      
       setIsSubmitted(true);
       setTimeout(() => {
         setIsSubmitted(false);
@@ -139,7 +152,15 @@ const Contact = () => {
                 <p className="text-slate-600">Thank you for reaching out. I'll get back to you within 24 hours.</p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6" name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
+                <input type="hidden" name="form-name" value="contact" />
+                
+                {/* Honeypot field for spam protection */}
+                <div style={{ display: 'none' }}>
+                  <label>
+                    Don't fill this out if you're human: <input name="bot-field" />
+                  </label>
+                </div>
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center">
                     <Calendar className="w-5 h-5 text-white" />

@@ -22,6 +22,23 @@
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
+        
+        <!-- Hidden form for Netlify Forms detection -->
+        <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+            <input type="text" name="name" />
+            <input type="email" name="email" />
+            <input type="tel" name="phone" />
+            <select name="investmentGoal">
+                <option value="portfolio-management">Portfolio Management</option>
+                <option value="wealth-planning">Wealth Planning</option>
+                <option value="forex-trading">Forex Trading</option>
+                <option value="crypto-investment">Crypto Investment</option>
+                <option value="options-strategies">Options Strategies</option>
+                <option value="general-consultation">General Consultation</option>
+            </select>
+            <textarea name="message"></textarea>
+        </form>
+        
         <div id="root"></div>
         <!--
       This HTML file is a template.
