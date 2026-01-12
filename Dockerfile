@@ -29,4 +29,8 @@ EXPOSE 8000 3000
 COPY start.sh ./
 RUN chmod +x start.sh
 
+RUN useradd -U -u 1000 appuser && \
+    chown -R 1000:1000 /app
+USER 1000
+
 CMD ["./start.sh"]
