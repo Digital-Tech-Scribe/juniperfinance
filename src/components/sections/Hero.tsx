@@ -120,54 +120,38 @@ const Hero: React.FC = () => {
           {/* Visual Element */}
           <div className="relative hidden lg:block">
             <div className="relative">
-              {/* Main Card */}
-              <GlassCard className="p-8" glow>
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-16 h-16 bg-accent rounded-xl flex items-center justify-center shadow-lg">
-                    <span className="text-white font-bold text-2xl font-poppins">JB</span>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-foreground text-xl font-poppins">{profile.name}</h3>
-                    <p className="text-foreground-secondary">{profile.title}</p>
-                  </div>
-                </div>
+              {/* Main Image Container */}
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 aspect-[4/5] max-w-md mx-auto">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
+                <img 
+                  src="/src/assets/images/juniper_portrait_1.webp" 
+                  alt="Juniper Broz - Financial Advisor" 
+                  className="w-full h-full object-cover"
+                />
                 
-                {/* Mini Chart */}
-                <div className="glass-light rounded-xl p-4 mb-4">
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm font-medium text-foreground-secondary">Portfolio Performance</span>
-                    <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">+18.4% YTD</span>
-                  </div>
-                  <div className="flex items-end gap-1 h-20">
-                    {[40, 55, 45, 60, 52, 70, 65, 80, 75, 85, 78, 90].map((height, i) => (
-                      <div
-                        key={i}
-                        className="flex-1 bg-accent/80 rounded-t"
-                        style={{ height: `${height}%` }}
-                      />
-                    ))}
-                  </div>
+                {/* Overlay Text */}
+                <div className="absolute bottom-6 left-6 z-20">
+                  <p className="text-white font-bold text-xl font-poppins">{profile.name}</p>
+                  <p className="text-white/90 text-sm">{profile.title}</p>
                 </div>
-
-                {/* Quick Stats */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="glass-light rounded-lg p-3 text-center">
-                    <p className="text-lg font-bold text-foreground font-poppins">1.85</p>
-                    <p className="text-xs text-foreground-muted">Sharpe Ratio</p>
-                  </div>
-                  <div className="glass-light rounded-lg p-3 text-center">
-                    <p className="text-lg font-bold text-foreground font-poppins">-8.3%</p>
-                    <p className="text-xs text-foreground-muted">Max Drawdown</p>
-                  </div>
-                </div>
-              </GlassCard>
+              </div>
 
               {/* Floating Elements */}
-              <div className="absolute -top-4 -right-4 bg-emerald-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg animate-float">
+              <div className="absolute top-8 -right-8 bg-emerald-500 text-white px-5 py-2.5 rounded-full text-sm font-medium shadow-xl animate-float z-30 flex items-center gap-2">
+                <Shield className="w-4 h-4" />
                 Verified Professional
               </div>
-              <div className="absolute -bottom-4 -left-4 glass-card px-4 py-2 rounded-full text-sm font-medium shadow-lg text-foreground-secondary border border-accent/30">
-                CFP® | CMT® | Series 7 & 66
+              
+              <div className="absolute -bottom-6 -left-8 glass-card px-6 py-4 rounded-xl shadow-xl text-foreground border border-accent/20 z-30 animate-float" style={{ animationDelay: '1.5s' }}>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                    <span className="text-accent font-bold">15+</span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-foreground-muted uppercase tracking-wider font-semibold">Experience</p>
+                    <p className="font-bold text-foreground font-poppins">Years in Market</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

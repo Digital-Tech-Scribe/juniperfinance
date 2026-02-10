@@ -19,19 +19,25 @@ const About: React.FC = () => {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Image/Visual Side */}
           <div className="relative">
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden glass-card">
-              {/* Placeholder for professional image */}
-              <div className="absolute inset-0 flex items-center justify-center bg-background-secondary">
-                <div className="w-48 h-48 bg-accent/10 rounded-full flex items-center justify-center border border-accent/20">
-                  <span className="text-foreground font-bold text-6xl font-poppins">JB</span>
-                </div>
-              </div>
+            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden glass-card group">
+              <img 
+                src="/src/assets/images/juniper_consult.webp" 
+                alt="Juniper Broz Consulting" 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
               {/* Decorative overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent" />
+              
+              {/* Quote overlay */}
+              <div className="absolute bottom-6 left-6 right-6 z-10">
+                 <p className="text-foreground/90 italic text-sm font-medium border-l-2 border-accent pl-3">
+                   "My mission is to provide the clarity and confidence you need to make sound financial decisions."
+                 </p>
+              </div>
             </div>
 
             {/* Floating Credentials Card */}
-            <GlassCard className="absolute -bottom-6 -right-6 lg:-right-12 p-6 max-w-xs" hover>
+            <GlassCard className="absolute -top-6 -right-6 lg:-right-12 p-6 max-w-xs z-20" hover>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shadow-lg">
                   <Award className="w-5 h-5 text-white" />
