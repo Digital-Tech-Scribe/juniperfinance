@@ -35,15 +35,35 @@ const Contact: React.FC = () => {
     setIsLoading(true);
     setError(null);
     
-    // Simulate form submission for static site
-    setTimeout(() => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+
       setIsSubmitted(true);
-      setIsLoading(false);
+      setFormData({ name: '', email: '', phone: '', investmentGoal: '', message: '' });
+      
+      // Auto-hide success message after 5 seconds
       setTimeout(() => {
         setIsSubmitted(false);
-        setFormData({ name: '', email: '', phone: '', investmentGoal: '', message: '' });
-      }, 3000);
-    }, 1000);
+      }, 5000);
+      
+    } catch (err: any) {
+      console.error('Submission error:', err);
+      setError(err.message || 'Something went wrong. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
