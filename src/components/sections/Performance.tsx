@@ -5,19 +5,21 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
 import type { ChartDataPoint } from '../../data/mockData';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 const Performance: React.FC = () => {
   const { performance } = useData();
+  const reveal = useScrollReveal();
   
   return (
-    <section id="performance" className="py-20 lg:py-28 bg-background-secondary relative overflow-hidden">
+    <section id="performance" className="py-12 lg:py-16 bg-background-secondary relative overflow-hidden">
       {/* Background Elements - Subtle accent color */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/3 rounded-full blur-3xl" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div ref={reveal} className="max-w-3xl mx-auto text-center mb-10 scroll-reveal">
           <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-2">
             Performance
           </p>

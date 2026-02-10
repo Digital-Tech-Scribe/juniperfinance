@@ -13,6 +13,7 @@ import Performance from './components/sections/Performance';
 import Insights from './components/sections/Insights';
 import Testimonials from './components/sections/Testimonials';
 import Contact from './components/sections/Contact';
+import ArticlePage from './pages/ArticlePage';
 
 const HomePage: React.FC = () => {
   return (
@@ -41,6 +42,7 @@ const App: React.FC = () => {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/article/:id" element={<ArticlePage />} />
             </Routes>
           </BrowserRouter>
         </DataProvider>

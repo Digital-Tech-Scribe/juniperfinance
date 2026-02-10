@@ -3,6 +3,7 @@ import { TrendingUp, Shield, BarChart3, MessageSquare } from 'lucide-react';
 import { philosophyPoints } from '../../data/mockData';
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 const iconMap: Record<string, React.ElementType> = {
   TrendingUp,
@@ -12,15 +13,16 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 const Philosophy: React.FC = () => {
+  const reveal = useScrollReveal();
   return (
-    <section id="philosophy" className="py-20 lg:py-28 bg-background-secondary relative overflow-hidden">
+    <section id="philosophy" className="py-12 lg:py-16 bg-background-secondary relative overflow-hidden">
       {/* Background Elements - Subtle accent color */}
       <div className="absolute top-1/2 left-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl -translate-y-1/2" />
       <div className="absolute top-0 right-0 w-96 h-96 bg-accent/3 rounded-full blur-3xl" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div ref={reveal} className="max-w-3xl mx-auto text-center mb-10 scroll-reveal">
           <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-2">
             Investment Philosophy
           </p>
@@ -39,7 +41,8 @@ const Philosophy: React.FC = () => {
             return (
               <GlassCard
                 key={point.id}
-                className="group p-8"
+                ref={reveal}
+                className={`group p-8 scroll-reveal reveal-delay-${(index + 1) * 200} tilt-effect`}
                 hover
               >
                 <div className="flex items-start gap-5">

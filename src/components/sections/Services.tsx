@@ -4,6 +4,7 @@ import { services } from '../../data/mockData';
 import { Button } from '../ui/button';
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 const iconMap: Record<string, React.ElementType> = {
   Briefcase,
@@ -12,14 +13,16 @@ const iconMap: Record<string, React.ElementType> = {
 };
 
 const Services: React.FC = () => {
+  const reveal = useScrollReveal();
+  
   return (
-    <section id="services" className="py-20 lg:py-28 bg-background-secondary relative overflow-hidden">
+    <section id="services" className="py-12 lg:py-16 bg-background-secondary relative overflow-hidden">
       {/* Background Elements */}
       <div className="absolute bottom-0 left-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl -translate-x-1/2 translate-y-1/2" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div ref={reveal} className="max-w-3xl mx-auto text-center mb-10 scroll-reveal">
           <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-2">
             Services
           </p>
@@ -33,12 +36,13 @@ const Services: React.FC = () => {
 
         {/* Services Grid */}
         <div className="grid lg:grid-cols-3 gap-8">
-          {services.map((service) => {
+          {services.map((service, index) => {
             const IconComponent = iconMap[service.icon];
             return (
               <GlassCard
                 key={service.id}
-                className="group relative overflow-hidden"
+                ref={reveal}
+                className={`group relative overflow-hidden scroll-reveal reveal-delay-${(index + 1) * 200} tilt-effect`}
                 hover
               >
                 {/* Top Accent */}

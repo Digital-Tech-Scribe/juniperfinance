@@ -31,13 +31,17 @@ const Footer: React.FC = () => {
             </p>
             <div className="flex gap-3">
               <a
-                href="#"
+                href={profile.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 glass-light rounded-lg flex items-center justify-center transition-all hover:border-accent/30 hover:text-accent text-foreground-muted border border-border"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-10 h-10 glass-light rounded-lg flex items-center justify-center transition-all hover:border-accent/30 hover:text-accent text-foreground-muted border border-border"
               >
                 <Linkedin className="w-5 h-5" />

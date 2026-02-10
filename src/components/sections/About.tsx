@@ -4,13 +4,15 @@ import { useData } from '../../context/DataContext';
 import { Button } from '../ui/button';
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 const About: React.FC = () => {
   const { profile } = useData();
   const credentials: string[] = profile.credentials || [];
+  const reveal = useScrollReveal();
   
   return (
-    <section id="about" className="py-20 lg:py-28 bg-background relative overflow-hidden">
+    <section id="about" className="py-12 lg:py-16 bg-background relative overflow-hidden">
       {/* Background Glow - Subtle accent color */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent/3 rounded-full blur-3xl" />
@@ -18,8 +20,8 @@ const About: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Image/Visual Side */}
-          <div className="relative">
-            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden glass-card group">
+          <div ref={reveal} className="relative scroll-reveal">
+            <div className="relative aspect-[4/5] rounded-2xl overflow-hidden glass-card group tilt-effect">
               <img 
                 src="/src/assets/images/juniper_consult.webp" 
                 alt="Juniper Broz Consulting" 
@@ -59,7 +61,7 @@ const About: React.FC = () => {
           </div>
 
           {/* Content Side */}
-          <div className="space-y-6">
+          <div ref={reveal} className="space-y-6 scroll-reveal reveal-delay-300">
             <div>
               <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-2">
                 About
@@ -109,20 +111,7 @@ const About: React.FC = () => {
               </div>
             </GlassCard>
 
-            {/* All Credentials */}
-            <div className="pt-4">
-              <p className="text-sm font-medium text-foreground-secondary mb-3">Professional Certifications</p>
-              <div className="flex flex-wrap gap-2">
-                {credentials.map((cred, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1.5 glass-light text-accent rounded-lg text-sm font-medium border border-accent/20"
-                  >
-                    {cred}
-                  </span>
-                ))}
-              </div>
-            </div>
+
           </div>
         </div>
       </div>

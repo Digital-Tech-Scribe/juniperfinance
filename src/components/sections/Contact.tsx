@@ -8,6 +8,7 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 interface FormData {
   name: string;
@@ -19,6 +20,7 @@ interface FormData {
 
 const Contact: React.FC = () => {
   const { profile } = useData();
+  const reveal = useScrollReveal();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -71,7 +73,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-20 lg:py-28 bg-background relative overflow-hidden">
+    <section id="contact" className="py-12 lg:py-16 bg-background relative overflow-hidden">
       {/* Background Elements - Subtle accent color */}
       <div className="absolute top-0 left-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/3 rounded-full blur-3xl" />
@@ -79,7 +81,7 @@ const Contact: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
           {/* Left Side - Contact Info */}
-          <div className="space-y-8">
+          <div ref={reveal} className="space-y-8 scroll-reveal">
             <div>
               <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-2">
                 Get In Touch
@@ -158,7 +160,8 @@ const Contact: React.FC = () => {
           </div>
 
           {/* Right Side - Contact Form */}
-          <GlassCard className="p-8 lg:p-10" glow>
+          <div ref={reveal} className="scroll-reveal reveal-delay-300">
+            <GlassCard className="p-8 lg:p-10" glow>
             {isSubmitted ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-12">
                 <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
@@ -272,7 +275,8 @@ const Contact: React.FC = () => {
                 </p>
               </form>
             )}
-          </GlassCard>
+            </GlassCard>
+          </div>
         </div>
       </div>
     </section>

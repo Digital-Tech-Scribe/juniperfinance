@@ -12,6 +12,8 @@ export interface ProfileData {
   yearsExperience: number;
   clientsServed: number;
   assetsManaged: string;
+  instagram?: string;
+  linkedin?: string;
 }
 
 export interface PhilosophyPoint {
@@ -62,6 +64,7 @@ export interface Insight {
   category: string;
   date: string;
   readTime: string;
+  content?: string;
 }
 
 export interface Testimonial {
@@ -84,11 +87,13 @@ export const profileData: ProfileData = {
   description: "Registered investment professional specializing in forex, cryptocurrency, and stock options with a proven track record of data-driven portfolio management.",
   finraLink: "https://brokercheck.finra.org/individual/summary/6740971",
   email: "contact@juniperbroz.com",
-  whatsapp: "+1234567890",
+  whatsapp: "+1 6834250603",
   telegram: "@juniperbrozforex",
   yearsExperience: 12,
   clientsServed: 500,
-  assetsManaged: "$45M+"
+  assetsManaged: "$45M+",
+  instagram: "https://www.instagram.com/juniper_broz?igsh=MXgzeWQzMncwM3dnOA%3D%3D&utm_source=qr",
+  linkedin: "https://www.linkedin.com/in/juniper-broz-4bb244261?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app"
 };
 
 export const philosophyPoints: PhilosophyPoint[] = [
@@ -180,7 +185,35 @@ export const insights: Insight[] = [
     excerpt: "Our analysis of current market conditions and strategic positioning for the months ahead.",
     category: "Market Insights",
     date: "July 15, 2025",
-    readTime: "8 min read"
+    readTime: "8 min read",
+    content: `
+      <p>The third quarter of 2025 has arrived with a complex set of market dynamics that require a disciplined, data-driven approach. As the global economy continues its transition, investors are facing a landscape defined by diverging central bank policies, evolving regulatory frameworks for digital assets, and the persistent influence of geopolitical shifts.</p>
+      
+      <h3>The Macro Landscape: A Global Rebalancing</h3>
+      <p>Inflationary pressures have begun to stabilize in major economies, but the path forward remains uneven. While some central banks are contemplating the first phase of interest rate reductions, others remain cautious, citing resilient labor markets and service sector stickiness. For the strategic investor, this creates a unique window of opportunity in both currencies and equities.</p>
+      
+      <p>Our positioning for Q3 involves a "Barbell Strategy"—maintaining exposure to high-quality, defensive value stocks while selectively engaging with high-beta growth sectors that have shown strong fundamental consolidation over the past six months.</p>
+      
+      <h3>The Forex Frontier: Diversification is Key</h3>
+      <p>In the currency markets, we are observing a significant shift in carry trade dynamics. The yen has shown signs of structural recovery as policy gaps narrow, while emerging market currencies continue to offer attractive yields for those with a higher risk appetite. Our focus remains on the G10 pairs where economic surprises are most likely to drive directional trends.</p>
+      
+      <blockquote>
+        "Success in volatile markets isn't about predicting the storm, but about having a vessel built to withstand any weather." 
+        <footer className="text-sm border-none pt-2">— Juniper Broz</footer>
+      </blockquote>
+      
+      <h3>Digital Assets: Maturity and Regulation</h3>
+      <p>The cryptocurrency sector is entering a new era of institutional maturity. With the approval of several spot-based ETFs and the tightening of global regulatory standards, volatility has shifted from speculative noise to fundamental price discovery. We remain constructive on the "Blue Chip" digital assets while maintaining a vigilant eye on the evolving Altcoin landscape.</p>
+      
+      <h3>Strategic Takeaways for Investors</h3>
+      <ul>
+        <li><strong>Maintain Liquidity:</strong> Cash reserves should be tactically allocated to take advantage of short-term pullbacks.</li>
+        <li><strong>Review Asset Allocation:</strong> Ensure your portfolio is not over-concentrated in any single sector or geography.</li>
+        <li><strong>Focus on Fundamentals:</strong> In a high-rate environment, earnings quality and balance sheet strength are the ultimate arbiters of value.</li>
+      </ul>
+      
+      <p>At Juniper Broz Investment, our commitment to your financial success is unwavering. We continue to monitor these developments in real-time, adjusting our strategies to ensure that your capital is not just protected, but positioned for long-term growth.</p>
+    `
   },
   {
     id: 2,

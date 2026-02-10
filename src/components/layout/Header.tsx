@@ -65,14 +65,18 @@ const Header: React.FC = () => {
             {/* Social Media Links */}
             <div className="flex items-center gap-1">
               <a
-                href="#"
+                href={profile.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 text-foreground-muted hover:text-accent hover:bg-background-tertiary rounded-lg transition-all"
                 aria-label="Instagram"
               >
                 <Instagram className="w-4 h-4" />
               </a>
               <a
-                href="#"
+                href={profile.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="p-2 text-foreground-muted hover:text-accent hover:bg-background-tertiary rounded-lg transition-all"
                 aria-label="LinkedIn"
               >
@@ -116,14 +120,18 @@ const Header: React.FC = () => {
               {/* Social Media Links - Mobile */}
               <div className="flex items-center gap-2 pb-3 border-b border-border">
                 <a
-                  href="#"
+                  href={profile.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 text-foreground-muted hover:text-accent hover:bg-background-tertiary rounded-lg transition-all"
                   aria-label="Instagram"
                 >
                   <Instagram className="w-5 h-5" />
                 </a>
                 <a
-                  href="#"
+                  href={profile.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 text-foreground-muted hover:text-accent hover:bg-background-tertiary rounded-lg transition-all"
                   aria-label="LinkedIn"
                 >

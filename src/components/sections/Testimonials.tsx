@@ -3,18 +3,20 @@ import { Star, Quote } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 const Testimonials: React.FC = () => {
   const { testimonials } = useData();
+  const reveal = useScrollReveal();
   
   return (
-    <section className="py-20 lg:py-28 bg-background relative overflow-hidden">
+    <section className="py-12 lg:py-16 bg-background relative overflow-hidden">
       {/* Background Elements - Subtle accent color */}
       <div className="absolute top-0 left-1/2 w-[600px] h-[600px] bg-accent/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-16">
+        <div ref={reveal} className="max-w-3xl mx-auto text-center mb-10 scroll-reveal">
           <p className="text-sm font-semibold text-accent uppercase tracking-wider mb-2">
             Testimonials
           </p>
@@ -28,10 +30,11 @@ const Testimonials: React.FC = () => {
 
         {/* Testimonials Grid */}
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
+          {testimonials.map((testimonial, index) => (
             <GlassCard
               key={testimonial.id}
-              className="relative p-6"
+              ref={reveal}
+              className={`relative p-6 scroll-reveal reveal-delay-${(index + 1) * 200} tilt-effect`}
               hover
             >
               {/* Quote Icon - positioned better */}
