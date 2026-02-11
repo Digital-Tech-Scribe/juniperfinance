@@ -84,7 +84,7 @@ Write polite, clear, and concise email replies.
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const emailResult = await resend.emails.send({
-      from: 'Juniper Broz <myservice@juniperbroz.com>',
+      from: 'Juniper Broz <myservice@resend.juniperbroz.com>',
       to: from,
       subject: `Re: ${subject}`,
       html: aiReply
