@@ -32,37 +32,39 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    console.log(`[email-reply] Processing email from: ${from}, subject: ${subject}`);
+    console.log(`[email-reply] Initial data - From: ${from}, Subject: ${subject}`);
 
     // --- SMART PARSING FOR CONTACT FORM SUBMISSIONS ---
-    // If the email comes from our own system (Contact Form), we must extract the REAL client email.
-    if (from.includes('resend.juniperbroz.com') || subject.includes('New Contact Form Submission')) {
-      console.log('[email-reply] Detected Contact Form submission. Parsing body for real client email...');
+    // Detect if the email is a system notification from the contact form
+    const isContactForm = from.includes('resend.juniperbroz.com') || subject.includes('New Contact Form Submission');
+    
+    if (isContactForm) {
+      console.log('[email-reply] Detected Contact Form notification. Parsing body...');
 
-      // Extract Email: Look for "Email: value" or "Email: <value>"
+      // Improved Regex for extracting client email from single-line summaries
+      // Matches "Email: value" until next keyword or space
       const emailMatch = body.match(/Email:\s*([^\s<>]+)/i) || body.match(/Email:\s*<([^>]+)>/i);
       
-      // Extract Name: Look for "Name: value"
-      const nameMatch = body.match(/Name:\s*(.+?)(\n|$)/i);
+      // Matches "Name: value" until "Email:" or end
+      const nameMatch = body.match(/Name:\s*(.+?)(?=\s*Email:|$)/i);
 
       if (emailMatch && emailMatch[1]) {
-        from = emailMatch[1].trim(); // Override 'from' with the real client email
-        console.log(`[email-reply] REPLACED sender with real client: ${from}`);
+        from = emailMatch[1].trim(); 
+        console.log(`[email-reply] Extracted real client email: ${from}`);
       } else {
-        console.warn('[email-reply] Could not extract client email from contact form body. Aborting to prevent loop.');
-        return res.status(200).json({ skipped: true, reason: 'Could not parse client email from contact form' });
+        console.warn('[email-reply] Parser FAILED: Could not extract client email from body');
+        // We log success but skip processing to prevent an error loop
+        return res.status(200).json({ success: false, reason: 'unparseable_contact_form_email' });
       }
 
-      // Add context for the AI
       const clientName = nameMatch ? nameMatch[1].trim() : 'Client';
-      const investmentMatch = body.match(/Investment Interest:\s*(.+?)(\n|$)/i);
-      const interest = investmentMatch ? investmentMatch[1].trim() : 'services';
       
-      // Prepend context to body so AI knows this came from a form
-      body = `[System Note: This is a contact form submission from ${clientName} interested in ${interest}.]\n\n${body}`;
+      // Update body with context so the AI knows it's a form submission
+      body = `[CONTEXT: This is a website contact form submission from ${clientName}]\n\nRAW MESSAGE: ${body}`;
     }
 
     // --- Step 1: Generate AI Reply via GitHub Models API ---
+    console.log(`[email-reply] Calling AI for: ${from}`);
     const aiResponse = await fetch('https://models.inference.ai.azure.com/chat/completions', {
       method: 'POST',
       headers: {
@@ -76,15 +78,14 @@ module.exports = async (req, res) => {
             role: 'system',
             content: `You are a professional email assistant for Juniper Broz Investment Services. 
 Write polite, clear, and concise email replies. 
-- Use a professional but warm tone.
-- Address the sender's questions or concerns directly.
-- Sign off as "Juniper Broz Investment Services".
-- Do NOT include a subject line in the reply body.
-- Format the reply as clean HTML paragraphs.`
+- Tone: Professional, warm, and helpful.
+- Sign off: "Juniper Broz Investment Services".
+- Format: Clean HTML paragraphs.
+- If it's a contact form summary, address the user's specific questions mentioned in the text.`
           },
           {
             role: 'user',
-            content: `Read the following client email and generate a professional reply:\n\nFrom: ${from}\nSubject: ${subject}\n\n${body}`
+            content: `Generate a professional reply to this client email:\n\nClient: ${from}\nSubject: ${subject}\n\nContent: ${body}`
           }
         ],
         temperature: 0.7,
@@ -94,45 +95,41 @@ Write polite, clear, and concise email replies.
 
     if (!aiResponse.ok) {
       const errText = await aiResponse.text();
-      console.error(`[email-reply] GitHub Models API error: ${aiResponse.status} - ${errText}`);
-      return res.status(502).json({ error: 'AI service error', details: errText });
+      console.error(`[email-reply] AI Error: ${aiResponse.status} - ${errText}`);
+      return res.status(502).json({ error: 'AI service unreachable' });
     }
 
     const aiData = await aiResponse.json();
     const aiReply = aiData.choices?.[0]?.message?.content;
 
     if (!aiReply) {
-      console.error('[email-reply] No reply generated from AI');
-      return res.status(502).json({ error: 'AI generated empty response' });
+      return res.status(502).json({ error: 'AI generated no content' });
     }
-
-    console.log(`[email-reply] AI reply generated (${aiReply.length} chars)`);
 
     // --- Step 2: Send Reply via Resend ---
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const emailResult = await resend.emails.send({
       from: 'Juniper Broz <myservice@resend.juniperbroz.com>',
-      to: from, // This is now the extracted client email
-      subject: `Re: ${subject.replace('New Contact Form Submission from', 'Inquiry from')}`, // Clean up subject
+      to: from, // Extracted client email
+      subject: `Re: ${subject.replace('New Contact Form Submission from', 'Inquiry from')}`,
       html: aiReply
     });
 
     if (emailResult.error) {
-      console.error('[email-reply] Resend error:', emailResult.error);
-      return res.status(502).json({ error: 'Email sending failed', details: emailResult.error });
+      console.error('[email-reply] Resend send error:', emailResult.error);
+      return res.status(502).json({ error: 'Email sending failed' });
     }
 
-    console.log(`[email-reply] Reply sent successfully to ${from}. Email ID: ${emailResult.data?.id}`);
+    console.log(`[email-reply] SUCCESS: Reply sent to ${from}`);
 
     return res.status(200).json({
       success: true,
-      emailId: emailResult.data?.id,
-      aiReplyLength: aiReply.length
+      emailId: emailResult.data?.id
     });
 
   } catch (error) {
     console.error('[email-reply] Unexpected error:', error);
-    return res.status(500).json({ error: 'Internal server error', details: error.message });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
