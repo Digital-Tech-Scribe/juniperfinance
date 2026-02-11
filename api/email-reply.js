@@ -2,7 +2,7 @@ const { Resend } = require('resend');
 
 /**
  * Serverless endpoint for automated email replies.
- * Pipeline: Zoho Mail → Make.com → This Endpoint → GitHub Models API → Resend
+ * Pipeline: Zoho Mail → Activepieces → This Endpoint → GitHub Models API → Resend
  */
 module.exports = async (req, res) => {
   // Only allow POST
@@ -19,7 +19,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { from, subject, body } = req.body;
+    let { from, subject, body } = req.body;
 
     // Validate required fields
     if (!from || !subject || !body) {
@@ -33,6 +33,34 @@ module.exports = async (req, res) => {
     }
 
     console.log(`[email-reply] Processing email from: ${from}, subject: ${subject}`);
+
+    // --- SMART PARSING FOR CONTACT FORM SUBMISSIONS ---
+    // If the email comes from our own system (Contact Form), we must extract the REAL client email.
+    if (from.includes('resend.juniperbroz.com') || subject.includes('New Contact Form Submission')) {
+      console.log('[email-reply] Detected Contact Form submission. Parsing body for real client email...');
+
+      // Extract Email: Look for "Email: value" or "Email: <value>"
+      const emailMatch = body.match(/Email:\s*([^\s<>]+)/i) || body.match(/Email:\s*<([^>]+)>/i);
+      
+      // Extract Name: Look for "Name: value"
+      const nameMatch = body.match(/Name:\s*(.+?)(\n|$)/i);
+
+      if (emailMatch && emailMatch[1]) {
+        from = emailMatch[1].trim(); // Override 'from' with the real client email
+        console.log(`[email-reply] REPLACED sender with real client: ${from}`);
+      } else {
+        console.warn('[email-reply] Could not extract client email from contact form body. Aborting to prevent loop.');
+        return res.status(200).json({ skipped: true, reason: 'Could not parse client email from contact form' });
+      }
+
+      // Add context for the AI
+      const clientName = nameMatch ? nameMatch[1].trim() : 'Client';
+      const investmentMatch = body.match(/Investment Interest:\s*(.+?)(\n|$)/i);
+      const interest = investmentMatch ? investmentMatch[1].trim() : 'services';
+      
+      // Prepend context to body so AI knows this came from a form
+      body = `[System Note: This is a contact form submission from ${clientName} interested in ${interest}.]\n\n${body}`;
+    }
 
     // --- Step 1: Generate AI Reply via GitHub Models API ---
     const aiResponse = await fetch('https://models.inference.ai.azure.com/chat/completions', {
@@ -85,8 +113,8 @@ Write polite, clear, and concise email replies.
 
     const emailResult = await resend.emails.send({
       from: 'Juniper Broz <myservice@resend.juniperbroz.com>',
-      to: from,
-      subject: `Re: ${subject}`,
+      to: from, // This is now the extracted client email
+      subject: `Re: ${subject.replace('New Contact Form Submission from', 'Inquiry from')}`, // Clean up subject
       html: aiReply
     });
 
@@ -95,7 +123,7 @@ Write polite, clear, and concise email replies.
       return res.status(502).json({ error: 'Email sending failed', details: emailResult.error });
     }
 
-    console.log(`[email-reply] Reply sent successfully. Email ID: ${emailResult.data?.id}`);
+    console.log(`[email-reply] Reply sent successfully to ${from}. Email ID: ${emailResult.data?.id}`);
 
     return res.status(200).json({
       success: true,
