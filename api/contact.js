@@ -1,5 +1,6 @@
 const { Resend } = require('resend');
 const nodemailer = require('nodemailer');
+const { createClient } = require('redis');
 
 /**
  * Serverless function to handle contact form submissions
@@ -25,6 +26,30 @@ module.exports = async (req, res) => {
     if (!process.env.RESEND_API_KEY) {
       console.error('Missing RESEND_API_KEY environment variable');
       return res.status(500).json({ error: 'Server configuration error' });
+    }
+
+    // --- RATE LIMITING CHECK (3-MINUTE COOLDOWN) ---
+    const rateLimitKey = `rate_limit_contact:${email.toLowerCase()}`;
+    let redisClient = null;
+
+    if (process.env.REDIS_URL) {
+      try {
+        redisClient = createClient({ url: process.env.REDIS_URL });
+        await redisClient.connect();
+        
+        const isLimited = await redisClient.get(rateLimitKey);
+        if (isLimited) {
+          console.log(`[Rate Limit] Blocking repeat submission from: ${email}`);
+          if (redisClient) await redisClient.disconnect();
+          return res.status(429).json({ 
+            error: 'Too many requests', 
+            message: 'To prevent spam, please wait 3 minutes before sending another inquiry.' 
+          });
+        }
+      } catch (redisError) {
+        console.error('[Rate Limit] Redis connection error:', redisError.message);
+        redisClient = null; 
+      }
     }
 
     const contactEmail = process.env.CONTACT_EMAIL || 'myservice@juniperbroz.com';
@@ -106,6 +131,18 @@ module.exports = async (req, res) => {
     }
 
     console.log(`Contact form results: Admin Notification sent. Client Auto-reply processed.`);
+
+    // --- SET COOLDOWN AFTER SUCCESSFUL SEND ---
+    if (redisClient && redisClient.isOpen) {
+      try {
+        await redisClient.set(rateLimitKey, 'active', { EX: 180 }); // 3 minutes
+        console.log(`[Rate Limit] Cooldown set for ${email} (180s)`);
+        await redisClient.disconnect();
+      } catch (limitError) {
+        console.error('[Rate Limit] Error setting limit:', limitError.message);
+      }
+    }
+
     return res.status(200).json({ success: true, message: 'Message sent successfully' });
 
   } catch (error) {

@@ -86,7 +86,7 @@ export const profileData: ProfileData = {
   tagline: "Strategic Wealth Building Through Disciplined Investment",
   description: "Registered investment professional specializing in forex, cryptocurrency, and stock options with a proven track record of data-driven portfolio management.",
   finraLink: "https://brokercheck.finra.org/individual/summary/6740971",
-  email: "contact@juniperbroz.com",
+  email: "myservice@juniperbroz.com",
   whatsapp: "+1 6834250603",
   telegram: "@juniperbrozforex",
   yearsExperience: 12,

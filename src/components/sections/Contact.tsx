@@ -31,6 +31,20 @@ const Contact: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState<number>(5);
+
+  React.useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isSubmitted && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (isSubmitted && countdown === 0) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setIsSubmitted(false);
+      setCountdown(5);
+      // Optional: window.location.href = '#home';
+    }
+    return () => clearTimeout(timer);
+  }, [isSubmitted, countdown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,11 +69,6 @@ const Contact: React.FC = () => {
       setIsSubmitted(true);
       setFormData({ name: '', email: '', phone: '', investmentGoal: '', message: '' });
       
-      // Auto-hide success message after 5 seconds
-      setTimeout(() => {
-        setIsSubmitted(false);
-      }, 5000);
-      
     } catch (err: any) {
       console.error('Submission error:', err);
       setError(err.message || 'Something went wrong. Please try again later.');
@@ -73,7 +82,7 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="py-12 lg:py-16 bg-background relative overflow-hidden">
+    <section id="contact" className="py-12 lg:py-16 bg-background relative">
       {/* Background Elements - Subtle accent color */}
       <div className="absolute top-0 left-1/2 w-[800px] h-[800px] bg-accent/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/3 rounded-full blur-3xl" />
@@ -163,12 +172,38 @@ const Contact: React.FC = () => {
           <div ref={reveal} className="scroll-reveal reveal-delay-300">
             <GlassCard className="p-8 lg:p-10" glow>
             {isSubmitted ? (
-              <div className="h-full flex flex-col items-center justify-center text-center py-12">
-                <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
-                  <CheckCircle className="w-8 h-8 text-white" />
+              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/95 backdrop-blur-md animate-fade-in">
+                <div className="max-w-md w-full glass-card p-10 text-center space-y-6 shadow-2xl border-accent/20">
+                  <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
+                    <CheckCircle className="w-10 h-10 text-white" />
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-3xl font-bold text-foreground font-poppins">Message Sent!</h3>
+                    <p className="text-lg text-foreground-secondary">
+                      Thank you for reaching out. I'll get back to you within 24 hours.
+                    </p>
+                  </div>
+                  
+                  <div className="pt-4 border-t border-border mt-6">
+                    <p className="text-foreground-muted flex items-center justify-center gap-2">
+                      Returning to home in <span className="text-accent font-bold text-xl">{countdown}s</span>
+                    </p>
+                    <div className="w-full h-1 bg-border rounded-full mt-2 overflow-hidden">
+                      <div 
+                        className="h-full bg-accent transition-all duration-1000 ease-linear"
+                        style={{ width: `${(countdown / 5) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <Button 
+                    variant="outline" 
+                    onClick={() => { setIsSubmitted(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="mt-4"
+                  >
+                    Go Back Now
+                  </Button>
                 </div>
-                <h3 className="text-xl font-bold text-foreground mb-2 font-poppins">Message Sent!</h3>
-                <p className="text-foreground-secondary">Thank you for reaching out. I'll get back to you within 24 hours.</p>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">

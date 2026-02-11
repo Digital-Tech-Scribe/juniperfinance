@@ -33,7 +33,30 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    // --- RATE LIMITING CHECK ---
+    // --- Step 1: Smart Parsing for Contact Form Submissions ---
+    // If it's a contact form notification, we must extract the client's actual email 
+    // BEFORE rate limiting, otherwise we'd be rate limiting our own system email.
+    const isContactForm = from.includes('resend.juniperbroz.com') || subject.includes('New Contact Form Submission');
+    let clientName = 'Client';
+    
+    if (isContactForm) {
+      console.log('[email-reply] Detected Contact Form notification. Parsing body...');
+      const emailMatch = body.match(/Email:\s*([^\s<>]+)/i) || body.match(/Email:\s*<([^>]+)>/i);
+      const nameMatch = body.match(/Name:\s*(.+?)(?=\s*Email:|$)/i);
+
+      if (emailMatch && emailMatch[1]) {
+        from = emailMatch[1].trim(); 
+        console.log(`[email-reply] Extracted real client email: ${from}`);
+      } else {
+        console.warn('[email-reply] Parser FAILED: Could not extract client email from body');
+        return res.status(200).json({ success: false, reason: 'unparseable_contact_form_email' });
+      }
+
+      clientName = nameMatch ? nameMatch[1].trim() : 'Client';
+      body = `[CONTEXT: This is a website contact form submission from ${clientName}]\n\nRAW MESSAGE: ${body}`;
+    }
+
+    // --- Step 2: Rate Limiting Check ---
     // Key format: rate_limit:user_email:YYYY-MM-DD
     const today = new Date().toISOString().split('T')[0];
     const rateLimitKey = `rate_limit:${from}:${today}`;
@@ -53,7 +76,7 @@ module.exports = async (req, res) => {
         }
       } catch (redisError) {
         console.error('[Rate Limit] Redis connection error:', redisError.message);
-        // We continue anyway even if Redis fails, but rate limiting won't work
+        redisClient = null; // Ensure we don't try to use a broken client
       }
     } else {
       console.warn('[Rate Limit] REDIS_URL not configured. Infinite loop protection disabled.');
@@ -67,28 +90,7 @@ module.exports = async (req, res) => {
       });
     }
 
-    console.log(`[email-reply] Initial data - From: ${from}, Subject: ${subject}`);
-
-    // --- SMART PARSING FOR CONTACT FORM SUBMISSIONS ---
-    const isContactForm = from.includes('resend.juniperbroz.com') || subject.includes('New Contact Form Submission');
-    
-    if (isContactForm) {
-      console.log('[email-reply] Detected Contact Form notification. Parsing body...');
-      const emailMatch = body.match(/Email:\s*([^\s<>]+)/i) || body.match(/Email:\s*<([^>]+)>/i);
-      const nameMatch = body.match(/Name:\s*(.+?)(?=\s*Email:|$)/i);
-
-      if (emailMatch && emailMatch[1]) {
-        from = emailMatch[1].trim(); 
-        console.log(`[email-reply] Extracted real client email: ${from}`);
-      } else {
-        console.warn('[email-reply] Parser FAILED: Could not extract client email from body');
-        if (redisClient) await redisClient.disconnect();
-        return res.status(200).json({ success: false, reason: 'unparseable_contact_form_email' });
-      }
-
-      const clientName = nameMatch ? nameMatch[1].trim() : 'Client';
-      body = `[CONTEXT: This is a website contact form submission from ${clientName}]\n\nRAW MESSAGE: ${body}`;
-    }
+    console.log(`[email-reply] Processing request - From: ${from}, Subject: ${subject}`);
 
     // --- Step 1: Generate AI Reply via GitHub Models API ---
     const aiResponse = await fetch('https://models.inference.ai.azure.com/chat/completions', {
