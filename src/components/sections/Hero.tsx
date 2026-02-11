@@ -6,6 +6,7 @@ import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
 import AnimatedCounter from '../ui/AnimatedCounter';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import portraitImage from '../../assets/images/juniper_portrait_1.webp';
 
 const Hero: React.FC = () => {
   const { profile } = useData();
@@ -128,7 +129,7 @@ const Hero: React.FC = () => {
               <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 aspect-[4/5] max-w-md mx-auto">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
                 <img 
-                  src="/src/assets/images/juniper_portrait_1.webp" 
+                  src={portraitImage}
                   alt="Juniper Broz - Financial Advisor" 
                   className="w-full h-full object-cover"
                 />

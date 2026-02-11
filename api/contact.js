@@ -17,11 +17,17 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
+    // Verify environment variables are present
+    if (!process.env.ZOHO_USER || !process.env.ZOHO_PASS) {
+      console.error('Missing ZOHO credentials in environment variables');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+
     // Configure Nodemailer with Zoho SMTP
     const transporter = nodemailer.createTransport({
       host: 'smtp.zoho.com',
-      port: 465,
-      secure: true, // SSL
+      port: 587,
+      secure: false, // TLS
       auth: {
         user: process.env.ZOHO_USER,
         pass: process.env.ZOHO_PASS

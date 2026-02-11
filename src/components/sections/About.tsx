@@ -5,6 +5,7 @@ import { Button } from '../ui/button';
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import consultImage from '../../assets/images/juniper_consult.webp';
 
 const About: React.FC = () => {
   const { profile } = useData();
@@ -23,7 +24,7 @@ const About: React.FC = () => {
           <div ref={reveal} className="relative scroll-reveal">
             <div className="relative aspect-[4/5] rounded-2xl overflow-hidden glass-card group tilt-effect">
               <img 
-                src="/src/assets/images/juniper_consult.webp" 
+                src={consultImage}
                 alt="Juniper Broz Consulting" 
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
