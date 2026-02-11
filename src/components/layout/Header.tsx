@@ -20,8 +20,8 @@ const Header: React.FC = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? 'glass border-b border-border shadow-sm'
+        isScrolled || isMobileMenuOpen
+          ? 'glass border-b border-border shadow-md'
           : 'bg-transparent'
       }`}
     >
@@ -103,7 +103,7 @@ const Header: React.FC = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border glass">
+          <div className="lg:hidden py-6 border-t border-border bg-background/98 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <a

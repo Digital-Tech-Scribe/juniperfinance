@@ -26,6 +26,9 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+        } else {
+          setIsVisible(false);
+          setCount(0); // Reset for next animation
         }
       },
       { threshold: 0.1 }

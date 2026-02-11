@@ -31,7 +31,7 @@ const Hero: React.FC = () => {
         }}
       />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Content */}
           <div className="space-y-8">
@@ -51,11 +51,11 @@ const Hero: React.FC = () => {
 
             {/* Headline */}
             <div ref={reveal} className="space-y-4 scroll-reveal reveal-delay-200">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-tight font-poppins">
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-foreground leading-[1.1] font-poppins tracking-tight">
                 Strategic Wealth Building Through{' '}
-                <GradientText>Disciplined Investment</GradientText>
+                <GradientText animate>Disciplined Investment</GradientText>
               </h1>
-              <p className="text-lg sm:text-xl text-foreground-secondary leading-relaxed max-w-xl">
+              <p className="text-base sm:text-xl text-foreground-secondary leading-relaxed max-w-2xl">
                 {profile.description}
               </p>
             </div>
@@ -75,7 +75,9 @@ const Hero: React.FC = () => {
                 <p className="text-sm text-foreground-muted">Clients Served</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-foreground font-poppins">{profile.assetsManaged}</p>
+                <p className="text-3xl font-bold text-foreground font-poppins">
+                  <AnimatedCounter end={45} prefix="$" suffix="M+" />
+                </p>
                 <p className="text-sm text-foreground-muted">Assets Managed</p>
               </div>
             </div>

@@ -14,15 +14,15 @@ interface ThemeProviderProps {
 }
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  // Check for saved theme preference or system preference
   const getInitialTheme = (): 'light' | 'dark' => {
-    // Check localStorage first
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('theme');
-      if (savedTheme === 'light' || savedTheme === 'dark') {
+      const isManual = localStorage.getItem('theme-manual') === 'true';
+      
+      if (isManual && (savedTheme === 'light' || savedTheme === 'dark')) {
         return savedTheme;
       }
-      // Check system preference
+      
       if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         return 'dark';
       }
@@ -33,29 +33,25 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>(getInitialTheme);
   const [mounted, setMounted] = useState<boolean>(false);
 
-  // Update theme class on document
   useEffect(() => {
     const root = window.document.documentElement;
-    
-    // Remove both classes first
     root.classList.remove('light', 'dark');
-    // Add the current theme class
     root.classList.add(theme);
     
-    // Save to localStorage
-    localStorage.setItem('theme', theme);
+    // Only save if it's already manual or becoming manual
+    if (localStorage.getItem('theme-manual') === 'true') {
+      localStorage.setItem('theme', theme);
+    }
     
     setMounted(true);
   }, [theme]);
 
-  // Listen for system theme changes
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     
     const handleChange = (e: MediaQueryListEvent) => {
-      // Only auto-switch if user hasn't manually set a preference
-      const savedTheme = localStorage.getItem('theme');
-      if (!savedTheme) {
+      const isManual = localStorage.getItem('theme-manual') === 'true';
+      if (!isManual) {
         setTheme(e.matches ? 'dark' : 'light');
       }
     };
@@ -65,7 +61,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, []);
 
   const toggleTheme = (): void => {
-    setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    localStorage.setItem('theme', newTheme);
+    localStorage.setItem('theme-manual', 'true');
   };
 
   const setSpecificTheme = (newTheme: 'light' | 'dark'): void => {

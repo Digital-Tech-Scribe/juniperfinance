@@ -39,8 +39,8 @@ const About: React.FC = () => {
               </div>
             </div>
 
-            {/* Floating Credentials Card */}
-            <GlassCard className="absolute -top-6 -right-6 lg:-right-12 p-6 max-w-xs z-20" hover>
+            {/* Floating Credentials Card - Desktop only (overflows on mobile) */}
+            <GlassCard className="hidden lg:block absolute -top-6 -right-12 p-6 max-w-xs z-20" hover>
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shadow-lg">
                   <Award className="w-5 h-5 text-white" />

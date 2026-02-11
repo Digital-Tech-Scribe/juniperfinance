@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Mail, MessageCircle, Send, Calendar, MapPin, Clock, CheckCircle } from 'lucide-react';
+import { Mail, MessageCircle, Send, Calendar, MapPin, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import GlassCard from '../ui/GlassCard';
 import GradientText from '../ui/GradientText';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
@@ -172,25 +171,25 @@ const Contact: React.FC = () => {
           <div ref={reveal} className="scroll-reveal reveal-delay-300">
             <GlassCard className="p-8 lg:p-10" glow>
             {isSubmitted ? (
-              <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/95 backdrop-blur-md animate-fade-in">
-                <div className="max-w-md w-full glass-card p-10 text-center space-y-6 shadow-2xl border-accent/20">
-                  <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
-                    <CheckCircle className="w-10 h-10 text-white" />
+              <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-background/95 backdrop-blur-md" style={{ minHeight: '100dvh' }}>
+                <div className="max-w-sm w-full bg-background border border-border rounded-2xl p-8 text-center space-y-5 shadow-2xl">
+                  <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
+                    <CheckCircle className="w-8 h-8 text-white" />
                   </div>
                   <div className="space-y-2">
-                    <h3 className="text-3xl font-bold text-foreground font-poppins">Message Sent!</h3>
-                    <p className="text-lg text-foreground-secondary">
+                    <h3 className="text-2xl font-bold text-foreground font-poppins">Message Sent!</h3>
+                    <p className="text-base text-foreground-secondary">
                       Thank you for reaching out. I'll get back to you within 24 hours.
                     </p>
                   </div>
                   
-                  <div className="pt-4 border-t border-border mt-6">
-                    <p className="text-foreground-muted flex items-center justify-center gap-2">
-                      Returning to home in <span className="text-accent font-bold text-xl">{countdown}s</span>
+                  <div className="pt-4 border-t border-border">
+                    <p className="text-foreground-muted text-sm">
+                      Returning to home in <span className="text-accent font-bold text-2xl">{countdown}s</span>
                     </p>
-                    <div className="w-full h-1 bg-border rounded-full mt-2 overflow-hidden">
+                    <div className="w-full h-2 bg-border rounded-full mt-3 overflow-hidden">
                       <div 
-                        className="h-full bg-accent transition-all duration-1000 ease-linear"
+                        className="h-full bg-accent rounded-full transition-all duration-1000 ease-linear"
                         style={{ width: `${(countdown / 5) * 100}%` }}
                       ></div>
                     </div>
@@ -199,7 +198,7 @@ const Contact: React.FC = () => {
                   <Button 
                     variant="outline" 
                     onClick={() => { setIsSubmitted(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                    className="mt-4"
+                    className="w-full mt-2"
                   >
                     Go Back Now
                   </Button>
@@ -260,22 +259,24 @@ const Contact: React.FC = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="investmentGoal" className="text-foreground-secondary">Investment Interest</Label>
-                    <Select
-                      value={formData.investmentGoal}
-                      onValueChange={(value: string) => setFormData({ ...formData, investmentGoal: value })}
-                    >
-                      <SelectTrigger className="h-11 bg-background-secondary border-border text-foreground focus:border-accent/50">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-background-secondary border-border">
-                        <SelectItem value="portfolio-management" className="text-foreground focus:bg-background-tertiary">Portfolio Management</SelectItem>
-                        <SelectItem value="wealth-planning" className="text-foreground focus:bg-background-tertiary">Wealth Planning</SelectItem>
-                        <SelectItem value="forex-trading" className="text-foreground focus:bg-background-tertiary">Forex Trading</SelectItem>
-                        <SelectItem value="crypto-investment" className="text-foreground focus:bg-background-tertiary">Crypto Investment</SelectItem>
-                        <SelectItem value="options-strategies" className="text-foreground focus:bg-background-tertiary">Options Strategies</SelectItem>
-                        <SelectItem value="general-consultation" className="text-foreground focus:bg-background-tertiary">General Consultation</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="relative">
+                      <select
+                        id="investmentGoal"
+                        name="investmentGoal"
+                        value={formData.investmentGoal}
+                        onChange={(e) => setFormData({ ...formData, investmentGoal: e.target.value })}
+                        className="flex h-11 w-full appearance-none rounded-md border border-border bg-background-secondary px-3 py-2 pr-10 text-base text-foreground shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring focus:border-accent/50 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                      >
+                        <option value="" disabled className="text-foreground-muted">Select an option</option>
+                        <option value="portfolio-management">Portfolio Management</option>
+                        <option value="wealth-planning">Wealth Planning</option>
+                        <option value="forex-trading">Forex Trading</option>
+                        <option value="crypto-investment">Crypto Investment</option>
+                        <option value="options-strategies">Options Strategies</option>
+                        <option value="general-consultation">General Consultation</option>
+                      </select>
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted pointer-events-none" />
+                    </div>
                   </div>
                 </div>
 

@@ -7,7 +7,7 @@ interface UseScrollRevealOptions {
 }
 
 export const useScrollReveal = (options: UseScrollRevealOptions = {}) => {
-  const { threshold = 0.1, rootMargin = '0px', triggerOnce = true } = options;
+  const { threshold = 0.1, rootMargin = '0px', triggerOnce = false } = options;
   const elementsRef = useRef<HTMLElement[]>([]);
 
   useEffect(() => {
