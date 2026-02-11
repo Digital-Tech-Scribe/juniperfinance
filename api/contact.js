@@ -1,7 +1,7 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 /**
- * Serverless function to handle contact form submissions via Zoho SMTP
+ * Serverless function to handle contact form submissions via Resend
  */
 module.exports = async (req, res) => {
   // Only allow POST requests
@@ -17,50 +17,39 @@ module.exports = async (req, res) => {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Verify environment variables are present
-    if (!process.env.ZOHO_USER || !process.env.ZOHO_PASS) {
-      console.error('Missing ZOHO credentials in environment variables');
+    // Verify environment variables
+    if (!process.env.RESEND_API_KEY) {
+      console.error('Missing RESEND_API_KEY environment variable');
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    // Configure Nodemailer with Zoho SMTP
-    const transporter = nodemailer.createTransport({
-      host: 'smtp.zoho.com',
-      port: 587,
-      secure: false, // TLS
-      auth: {
-        user: process.env.ZOHO_USER,
-        pass: process.env.ZOHO_PASS
-      }
-    });
+    const contactEmail = process.env.CONTACT_EMAIL || 'myservice@juniperbroz.com';
+    const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Send email
-    await transporter.sendMail({
-      from: process.env.ZOHO_USER, // Must match authenticated user
-      to: process.env.ZOHO_USER,   // Sending to yourself
-      replyTo: email,              // Allow replying directly to the user
+    // Send email via Resend
+    const result = await resend.emails.send({
+      from: 'Juniper Broz <myservice@juniperbroz.com>',
+      to: contactEmail,
+      replyTo: email,
       subject: `New Contact Form Submission from ${name}`,
-      text: `
-        Name: ${name}
-        Email: ${email}
-        Phone: ${phone || 'Not provided'}
-        Investment Goal: ${investmentGoal || 'Not specified'}
-        
-        Message:
-        ${message}
-      `,
       html: `
         <h3>New Contact Form Submission</h3>
         <p><strong>Name:</strong> ${name}</p>
         <p><strong>Email:</strong> ${email}</p>
         <p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
-        <p><strong>Investment Goal:</strong> ${investmentGoal || 'Not specified'}</p>
+        <p><strong>Investment Interest:</strong> ${investmentGoal || 'Not specified'}</p>
         <hr />
         <p><strong>Message:</strong></p>
         <p>${message.replace(/\n/g, '<br>')}</p>
       `
     });
 
+    if (result.error) {
+      console.error('Resend error:', result.error);
+      return res.status(502).json({ error: 'Email sending failed', details: result.error });
+    }
+
+    console.log(`Contact form email sent. ID: ${result.data?.id}`);
     return res.status(200).json({ success: true, message: 'Email sent successfully' });
   } catch (error) {
     console.error('Error sending email:', error);
