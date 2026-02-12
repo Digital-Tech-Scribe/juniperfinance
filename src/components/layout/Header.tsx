@@ -29,8 +29,8 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-between h-16 lg:h-20">
           {/* Logo */}
           <a href="#home" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shadow-lg transition-all group-hover:shadow-xl">
-              <span className="text-white font-bold text-lg font-poppins">JB</span>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-all group-hover:scale-105">
+              <img src="/src/assets/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="hidden sm:flex flex-col justify-center">
               <p className="font-semibold text-lg leading-none transition-colors text-foreground font-poppins">
