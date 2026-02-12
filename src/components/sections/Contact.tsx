@@ -19,6 +19,7 @@ interface FormData {
 }
 
 const Contact: React.FC = () => {
+  const { profile } = useData();
   const navigate = useNavigate();
   const reveal = useScrollReveal();
   const [formData, setFormData] = useState<FormData>({
