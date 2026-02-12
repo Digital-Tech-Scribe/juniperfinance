@@ -14,6 +14,7 @@ import Insights from './components/sections/Insights';
 import Testimonials from './components/sections/Testimonials';
 import Contact from './components/sections/Contact';
 import ArticlePage from './pages/ArticlePage';
+import SuccessPage from './pages/SuccessPage';
 
 const HomePage: React.FC = () => {
   return (
@@ -43,6 +44,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/article/:id" element={<ArticlePage />} />
+              <Route path="/success" element={<SuccessPage />} />
             </Routes>
           </BrowserRouter>
         </DataProvider>

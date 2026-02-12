@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Mail, MessageCircle, Send, Calendar, MapPin, Clock, CheckCircle, ChevronDown } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { Button } from '../ui/button';
@@ -18,7 +19,7 @@ interface FormData {
 }
 
 const Contact: React.FC = () => {
-  const { profile } = useData();
+  const navigate = useNavigate();
   const reveal = useScrollReveal();
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -27,23 +28,8 @@ const Contact: React.FC = () => {
     investmentGoal: '',
     message: ''
   });
-  const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState<number>(5);
-
-  React.useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isSubmitted && countdown > 0) {
-      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    } else if (isSubmitted && countdown === 0) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setIsSubmitted(false);
-      setCountdown(5);
-      // Optional: window.location.href = '#home';
-    }
-    return () => clearTimeout(timer);
-  }, [isSubmitted, countdown]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +51,8 @@ const Contact: React.FC = () => {
         throw new Error(data.error || 'Failed to send message');
       }
 
-      setIsSubmitted(true);
+      setIsLoading(false); // Enable button if we want to allow quick re-submit, but we're navigating away.
+      navigate('/success');
       setFormData({ name: '', email: '', phone: '', investmentGoal: '', message: '' });
       
     } catch (err: any) {
@@ -170,49 +157,6 @@ const Contact: React.FC = () => {
           {/* Right Side - Contact Form */}
           <div ref={reveal} className="scroll-reveal reveal-delay-300">
             <GlassCard className="p-8 lg:p-10" glow>
-            {isSubmitted && (
-              <>
-                {/* Portal the success message to document.body to break out of stacking contexts */}
-                {React.createPortal(
-                  <div className="fixed inset-0 z-[9999] flex items-center justify-center p-6 bg-background/95 backdrop-blur-md" style={{ minHeight: '100dvh' }}>
-                    <div className="max-w-sm w-full bg-background border border-border rounded-2xl p-8 text-center space-y-5 shadow-2xl animate-fade-in-up">
-                      <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-lg animate-bounce">
-                        <CheckCircle className="w-8 h-8 text-white" />
-                      </div>
-                      <div className="space-y-2">
-                        <h3 className="text-2xl font-bold text-foreground font-poppins">Message Sent!</h3>
-                        <p className="text-base text-foreground-secondary">
-                          Thank you for reaching out. I'll get back to you within 24 hours.
-                        </p>
-                      </div>
-                      
-                      <div className="pt-4 border-t border-border">
-                        <p className="text-foreground-muted text-sm">
-                          Returning to home in <span className="text-accent font-bold text-2xl">{countdown}s</span>
-                        </p>
-                        <div className="w-full h-2 bg-border rounded-full mt-3 overflow-hidden">
-                          <div 
-                            className="h-full bg-accent rounded-full transition-all duration-1000 ease-linear"
-                            style={{ width: `${(countdown / 5) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-
-                      <Button 
-                        variant="outline" 
-                        onClick={() => { setIsSubmitted(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                        className="w-full mt-2"
-                      >
-                        Go Back Now
-                      </Button>
-                    </div>
-                  </div>,
-                  document.body
-                )}
-              </>
-            )}
-            
-            {!isSubmitted && (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center shadow-lg">
@@ -318,7 +262,6 @@ const Contact: React.FC = () => {
                   By submitting, you agree to our privacy policy. Your information will never be shared.
                 </p>
               </form>
-            )}
             </GlassCard>
           </div>
         </div>
