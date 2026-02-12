@@ -2,6 +2,7 @@ import React from 'react';
 import { Mail, Phone, MapPin, Linkedin, Instagram } from 'lucide-react';
 import { navLinks } from '../../data/mockData';
 import { useData } from '../../context/DataContext';
+import logoImage from '../../assets/images/logo.png';
 
 const Footer: React.FC = () => {
   const { profile } = useData();
@@ -19,7 +20,7 @@ const Footer: React.FC = () => {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center">
-                <img src="/src/assets/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                <img src={logoImage} alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <p className="font-semibold text-lg text-foreground font-poppins">{profile.name}</p>

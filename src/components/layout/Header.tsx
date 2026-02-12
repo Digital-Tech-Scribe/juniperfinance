@@ -3,6 +3,7 @@ import { Menu, X, Instagram, Linkedin } from 'lucide-react';
 import ThemeToggle from '../ui/ThemeToggle';
 import { navLinks } from '../../data/mockData';
 import { useData } from '../../context/DataContext';
+import logoImage from '../../assets/images/logo.png';
 
 const Header: React.FC = () => {
   const { profile } = useData();
@@ -30,7 +31,7 @@ const Header: React.FC = () => {
           {/* Logo */}
           <a href="#home" className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-all group-hover:scale-105">
-              <img src="/src/assets/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+              <img src={logoImage} alt="Logo" className="w-full h-full object-contain" />
             </div>
             <div className="hidden sm:flex flex-col justify-center">
               <p className="font-semibold text-lg leading-none transition-colors text-foreground font-poppins">

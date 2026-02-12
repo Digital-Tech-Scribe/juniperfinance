@@ -8,6 +8,8 @@ import GlassCard from '../components/ui/GlassCard';
 import GradientText from '../components/ui/GradientText';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
+import consultImage from '../assets/images/juniper_consult.webp';
+import portraitImage from '../assets/images/juniper_portrait_1.webp';
 
 const ArticlePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -40,7 +42,7 @@ const ArticlePage: React.FC = () => {
         <section className="relative h-[60vh] min-h-[400px] flex items-center overflow-hidden">
           <div className="absolute inset-0">
             <img 
-              src="/src/assets/images/juniper_consult.webp" 
+              src={consultImage} 
               alt={article.title}
               className="w-full h-full object-cover opacity-30"
             />
@@ -108,7 +110,7 @@ const ArticlePage: React.FC = () => {
                 <div className="flex flex-wrap items-center justify-between gap-8">
                   <div className="flex items-center gap-4">
                     <div className="w-16 h-16 rounded-2xl overflow-hidden border border-accent/20">
-                      <img src="/src/assets/images/juniper_portrait_1.webp" alt={profile.name} className="w-full h-full object-cover" />
+                      <img src={portraitImage} alt={profile.name} className="w-full h-full object-cover" />
                     </div>
                     <div>
                       <p className="font-bold text-foreground font-poppins">{profile.name}</p>
