@@ -34,9 +34,22 @@ module.exports = async (req, res) => {
 
     if (process.env.REDIS_URL) {
       try {
-        redisClient = createClient({ url: process.env.REDIS_URL });
-        await redisClient.connect();
+        redisClient = createClient({ 
+          url: process.env.REDIS_URL,
+          socket: {
+            connectTimeout: 5000,
+            reconnectStrategy: false // Don't retry in serverless
+          }
+        });
+        redisClient.on('error', (err) => console.error('[Redis] Client error:', err.message));
+
+        // Race: connect vs 5s timeout to prevent serverless hang
+        await Promise.race([
+          redisClient.connect(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('Redis connect timeout (5s)')), 5000))
+        ]);
         
+        console.log('[Rate Limit] Redis connected successfully');
         const isLimited = await redisClient.get(rateLimitKey);
         if (isLimited) {
           console.log(`[Rate Limit] Blocking repeat submission from: ${email}`);
@@ -47,9 +60,12 @@ module.exports = async (req, res) => {
           });
         }
       } catch (redisError) {
-        console.error('[Rate Limit] Redis connection error:', redisError.message);
+        console.error('[Rate Limit] Redis FAILED:', redisError.message, '| URL prefix:', process.env.REDIS_URL?.substring(0, 20));
+        if (redisClient) { try { await redisClient.disconnect(); } catch(e) {} }
         redisClient = null; 
       }
+    } else {
+      console.warn('[Rate Limit] REDIS_URL not set. Rate limiting disabled.');
     }
 
     const contactEmail = process.env.CONTACT_EMAIL || 'myservice@juniperbroz.com';
