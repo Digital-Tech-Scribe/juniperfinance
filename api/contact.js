@@ -68,12 +68,12 @@ module.exports = async (req, res) => {
       console.warn('[Rate Limit] REDIS_URL not set. Rate limiting disabled.');
     }
 
-    const contactEmail = process.env.CONTACT_EMAIL || 'myservice@juniperbroz.com';
+    const contactEmail = process.env.CONTACT_EMAIL || 'myservice@juniperbroz.net';
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // --- Email 1: Notification to Business (via Resend) ---
     const adminEmailPromise = resend.emails.send({
-      from: 'Juniper Broz <myservice@resend.juniperbroz.com>',
+      from: 'Juniper Broz <myservice@resend.juniperbroz.net>',
       to: contactEmail,
       replyTo: email,
       subject: `New Contact Form Submission from ${name}`,
@@ -115,14 +115,14 @@ module.exports = async (req, res) => {
                 <br>
                 <p>Best regards,</p>
                 <p><strong>Juniper Broz Investment Services</strong></p>
-                <p><a href="https://juniperbroz.com" style="color: #0066cc;">juniperbroz.com</a></p>
+                <p><a href="https://juniperbroz.net" style="color: #0066cc;">juniperbroz.net</a></p>
               </div>
             `
         });
     } else {
         console.warn('ZOHO_EMAIL or ZOHO_PASSWORD missing. Falling back to Resend for auto-reply.');
         clientReplyPromise = resend.emails.send({
-            from: 'Juniper Broz <myservice@resend.juniperbroz.com>',
+            from: 'Juniper Broz <myservice@resend.juniperbroz.net>',
             to: email,
             subject: `Thank you for contacting Juniper Broz`,
             html: `
@@ -133,7 +133,7 @@ module.exports = async (req, res) => {
                 <br>
                 <p>Best regards,</p>
                 <p><strong>Juniper Broz Investment Services</strong></p>
-                <p><a href="https://juniperbroz.com" style="color: #0066cc;">juniperbroz.com</a></p>
+                <p><a href="https://juniperbroz.net" style="color: #0066cc;">juniperbroz.net</a></p>
               </div>
             `
         });

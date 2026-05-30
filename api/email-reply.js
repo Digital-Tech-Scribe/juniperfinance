@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
     // --- Step 1: Smart Parsing for Contact Form Submissions ---
     // If it's a contact form notification, we must extract the client's actual email 
     // BEFORE rate limiting, otherwise we'd be rate limiting our own system email.
-    const isContactForm = from.includes('resend.juniperbroz.com') || subject.includes('New Contact Form Submission');
+    const isContactForm = from.includes('resend.juniperbroz.net') || subject.includes('New Contact Form Submission');
     let clientName = 'Client';
     
     if (isContactForm) {
@@ -152,7 +152,7 @@ Write polite, clear, and concise email replies.
     // --- Step 2: Send Reply via Resend ---
     const resend = new Resend(process.env.RESEND_API_KEY);
     const emailResult = await resend.emails.send({
-      from: 'Juniper Broz <myservice@resend.juniperbroz.com>',
+      from: 'Juniper Broz <myservice@resend.juniperbroz.net>',
       to: from,
       subject: `Re: ${subject.replace('New Contact Form Submission from', 'Inquiry from')}`,
       html: aiReply
